@@ -16,6 +16,7 @@ while ($numAux > 0){
 
 echo "numero $num en binario: $binario";
 
+
 ?>
 </BODY>
 </HTML>
