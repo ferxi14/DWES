@@ -13,27 +13,30 @@ try {
         $nombre_categoria = trim($_POST['nombre_categoria']);
 
         if (!empty($nombre_categoria)) {
-            $stmt = $conn->prepare("SELECT MAX(id_categoria) AS max_id FROM CATEGORIA");
-            $stmt->execute();
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $row = $stmt->fetch();
+            $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM CATEGORIA WHERE nombre = :nombre");
+            $stmt->execute([':nombre' => $nombre_categoria]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($row['max_id'] != null) {
-                $ultimo_id = $row['max_id'];
+            if ($row['total'] > 0) {
+                echo "Error: Ya existe una categoría con el nombre '$nombre_categoria'.";
             } else {
-                $ultimo_id = 'C-000';
+                if ($row['max_id'] != null) {
+                    $ultimo_id = $row['max_id'];
+                } else {
+                    $ultimo_id = 'C-000';
+                }
+                $ultimo_numero = (int) substr($ultimo_id, 2);
+                $nuevo_numero = $ultimo_numero + 1;
+                $nuevo_id = 'C-' . str_pad($nuevo_numero, 3, '0', STR_PAD_LEFT);
+
+                $stmt = $conn->prepare("INSERT INTO CATEGORIA (id_categoria, nombre) VALUES (:id_categoria, :nombre)");
+                $stmt->execute([
+                    ':id_categoria' => $nuevo_id,
+                    ':nombre' => $nombre_categoria
+                ]);
+
+                echo "Categoría añadida con ID: $nuevo_id";
             }
-            $ultimo_numero = (int) substr($ultimo_id, 2); 
-            $nuevo_numero = $ultimo_numero + 1; 
-            $nuevo_id = 'C-' . str_pad($nuevo_numero, 3, '0', STR_PAD_LEFT); 
-
-            $stmt = $conn->prepare("INSERT INTO CATEGORIA (id_categoria, nombre) VALUES (:id_categoria, :nombre)");
-            $stmt->execute([
-                ':id_categoria' => $nuevo_id,
-                ':nombre' => $nombre_categoria
-            ]);
-
-            echo "Categoría añadida con ID: $nuevo_id";
         } else {
             echo "El nombre de la categoría no puede estar vacío.";
         }
