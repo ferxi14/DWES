@@ -29,6 +29,7 @@ try {
                 $nuevo_numero = $ultimo_numero + 1;
                 $nuevo_id = 'C-' . str_pad($nuevo_numero, 3, '0', STR_PAD_LEFT);
 
+                //Insertar la categoria en la tabla
                 $stmt = $conn->prepare("INSERT INTO CATEGORIA (id_categoria, nombre) VALUES (:id_categoria, :nombre)");
                 $stmt->execute([
                     ':id_categoria' => $nuevo_id,
