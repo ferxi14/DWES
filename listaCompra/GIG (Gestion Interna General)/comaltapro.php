@@ -8,15 +8,16 @@ try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $stmt = $conn->prepare("SELECT id_categoria, nombre FROM CATEGORIA ORDER BY nombre");
+    $stmt = $conn->prepare("SELECT id_categoria, nombre, precio FROM CATEGORIA ORDER BY nombre");
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $categorias = $stmt->fetchAll();
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $nombre_producto = trim($_POST['nombre_producto']);
+        $precio = $_POST['precio'];
         $id_categoria = $_POST['id_categoria'];
-
+        
         if (!empty($nombre_producto) && !empty($id_categoria)) {
             $stmt = $conn->prepare("SELECT MAX(id_producto) AS max_id FROM PRODUCTO");
             $stmt->execute();
@@ -33,10 +34,11 @@ try {
             $nuevo_id = 'P' . str_pad($nuevo_numero, 4, '0', STR_PAD_LEFT);
 
             // Insertar el nuevo producto
-            $stmt = $conn->prepare("INSERT INTO PRODUCTO (id_producto, nombre, id_categoria) VALUES (:id_producto, :nombre, :id_categoria)");
+            $stmt = $conn->prepare("INSERT INTO PRODUCTO (id_producto, nombre, precio, id_categoria) VALUES (:id_producto, :nombre, :precio, :id_categoria)");
             $stmt->execute([
                 ':id_producto' => $nuevo_id,
                 ':nombre' => $nombre_producto,
+                ':precio' => $precio,
                 ':id_categoria' => $id_categoria
             ]);
 
@@ -62,6 +64,9 @@ try {
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
         <label for="nombre_producto">Nombre del producto:</label>
         <input type="text" id="nombre_producto" name="nombre_producto" required><br><br>
+
+        <label for="precio">Precio:</label>
+        <input type="text" id="precio" name="precio" required><br><br>
 
         <label for="id_categoria">Categoría:</label>
         <select id="id_categoria" name="id_categoria" required>
