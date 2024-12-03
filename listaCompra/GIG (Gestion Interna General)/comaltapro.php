@@ -8,7 +8,7 @@ try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $stmt = $conn->prepare("SELECT id_categoria, nombre, precio FROM CATEGORIA ORDER BY nombre");
+    $stmt = $conn->prepare("SELECT id_categoria, nombre FROM CATEGORIA ORDER BY nombre");
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $categorias = $stmt->fetchAll();
