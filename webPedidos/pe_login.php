@@ -13,13 +13,13 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-/*// Inicializar contador de intentos fallidos en sesión
+// Inicializar contador de intentos fallidos en sesión
 if (!isset($_SESSION['intentos_login'])) {
-    $_SESSION['intetos_login'] = 0;
-}*/
+    $_SESSION['intentos_login'] = 0;
+}
 
 // Verificar si el usuario ya está autenticado
-if (isset($_SESSION['intetos_login'])) {
+if (isset($_SESSION['intentos_login'])) {
     header("Location: pe_inicio.php");
     exit;
 }
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Verificar contraseña
             if (password_verify($password, $hashedPassword)) {
                 // Restablecer intentos fallidos
-                $_SESSION['login_attempts'] = 0;
+                $_SESSION['intentos_login'] = 0;
 
                 // Guardar datos en la sesión
                 $_SESSION['customerNumber'] = $user['customerNumber'];
@@ -55,11 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 header("Location: pe_inicio.php");
                 exit;
             } else {
-                $_SESSION['login_attempts']++; // Incrementar intentos fallidos
+                $_SESSION['intentos_login']++; // Incrementar intentos fallidos
                 $error = "Contraseña incorrecta.";
             }
         } else {
-            $_SESSION['login_attempts']++; // Incrementar intentos fallidos
+            $_SESSION['intentos_login']++; // Incrementar intentos fallidos
             $error = "Usuario no encontrado.";
         }
 
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Cerrar conexión si se alcanzan los 3 intentos fallidos
-    if ($_SESSION['login_attempts'] >= 3) {
+    if ($_SESSION['intentos_login'] >= 3) {
         $conn = null; // Cerrar conexión
         $error = "Has fallado el inicio de sesión 3 veces. Conexión cerrada.";
     }
