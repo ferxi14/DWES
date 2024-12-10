@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             var_dump($user);
 
             $hashedPassword = password_hash($user['contactLastName'], PASSWORD_DEFAULT);
+            var_dump($hashedPassword);
 
             // Verificar contraseña
             if (password_verify($password, $hashedPassword)) {
@@ -46,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['customerNumber'] = $user['customerNumber'];
 
                 // Redirigir al menú principal
-                header("Location: pe_inicio.php");
+                //header("Location: pe_inicio.php");
                 exit();
             } else {
                 $_SESSION['intentos_login']++; // Incrementar intentos fallidos si la verificación de la contraseña falla
