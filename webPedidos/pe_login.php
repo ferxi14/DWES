@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     var_dump($customerNumber, $password);
-    var_dump($_SESSION['intentos_login']);
+    
 
     try {
         // Consulta para obtener los datos del cliente
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['intentos_login']++; // Incrementar intentos fallidos si el usuario no está en la base de datos registrado
             $error = "Fallo al iniciar sesión, usuario no encontrado.";
         }
-
+        var_dump($_SESSION['intentos_login']);
     } catch (PDOException $e) {
         $error = "Error al consultar en la base de datos" . $e->getMessage();
     }
