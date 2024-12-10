@@ -50,11 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit();
             } else {
                 $_SESSION['intentos_login']++; // Incrementar intentos fallidos si la verificación de la contraseña falla
-                $error = "Contraseña incorrecta.";
+                $error = "Fallo al iniciar sesión, contraseña incorrecta";
             }
         } else {
             $_SESSION['intentos_login']++; // Incrementar intentos fallidos si el usuario no está en la base de datos registrado
-            $error = "Usuario no encontrado.";
+            $error = "Fallo al iniciar sesión, usuario no encontrado.";
         }
 
     } catch (PDOException $e) {
