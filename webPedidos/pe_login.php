@@ -13,16 +13,11 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Inicializa contador de intentos fallidos en sesión
-if (!isset($_SESSION['intentos_login'])) {
-    $_SESSION['intentos_login'] = 0;
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $customerNumber = $_POST['customerNumber'];
     $password = $_POST['password'];
 
-    var_dump($customerNumber, $password);
+    var_dump($customerNumber, $password); //Para verlo en caso de fallo
 
     try {
         // Consulta para obtener los datos del cliente
@@ -38,33 +33,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Verificar contraseña
             if (password_verify($password, $hashedPassword)) {
-                // Restablecer intentos fallidos
-                $_SESSION['intentos_login'] = 0;
-
-                // Guardar datos en la sesión
-                $_SESSION['customerNumber'] = $user['customerNumber'];
 
                 // Redirigir al menú principal
                 header("Location: pe_inicio.php");
                 exit();
             } else {
-                $_SESSION['intentos_login']++; // Incrementar intentos fallidos si la verificación de la contraseña falla
                 $error = "Contraseña incorrecta.";
             }
-        } else {
-            $_SESSION['intentos_login']++; // Incrementar intentos fallidos si el usuario no está en la base de datos registrado
-            $error = "Usuario no encontrado.";
         }
 
     } catch (PDOException $e) {
         $error = "Error al consultar en la base de datos" . $e->getMessage();
     }
 
-    // Cerrar conexión si se alcanzan los 3 intentos fallidos
-    if ($_SESSION['intentos_login'] >= 3) {
-        $conn = null;
-        $error = "Has fallado el inicio de sesión 3 veces. Conexión cerrada.";
-    }
+    
 }
 
 
