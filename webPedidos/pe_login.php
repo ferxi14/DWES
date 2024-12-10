@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 // Redirigir al menú principal
                 header("Location: pe_inicio.php");
-                exit;
+                exit();
             } else {
                 $_SESSION['intentos_login']++; // Incrementar intentos fallidos si la verificación de la contraseña falla
                 $error = "Contraseña incorrecta.";
