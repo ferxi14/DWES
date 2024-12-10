@@ -13,22 +13,16 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Inicializar contador de intentos fallidos en sesión
+// Inicializa contador de intentos fallidos en sesión
 if (!isset($_SESSION['intentos_login'])) {
     $_SESSION['intentos_login'] = 0;
-}
-
-// Verificar si el usuario ya está autenticado
-if (isset($_SESSION['intentos_login'])) {
-    header("Location: pe_inicio.php");
-    exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $customerNumber = $_POST['customerNumber'];
     $password = $_POST['password'];
 
-    var_dump("Datos recibidos: ", $customerNumber, $password);
+    var_dump($customerNumber, $password);
 
     try {
         // Consulta para obtener los datos del cliente
@@ -36,10 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':customerNumber', $customerNumber, PDO::PARAM_INT);
         $stmt->execute();
 
-        var_dump("Número de filas encontradas: ", $stmt->rowCount());
         if ($stmt->rowCount() == 1) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            var_dump("Datos del usuario: ", $user);
+            var_dump($user);
 
             $hashedPassword = password_hash($user['contactLastName'], PASSWORD_DEFAULT);
 
@@ -55,11 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 header("Location: pe_inicio.php");
                 exit;
             } else {
-                $_SESSION['intentos_login']++; // Incrementar intentos fallidos
+                $_SESSION['intentos_login']++; // Incrementar intentos fallidos si la verificación de la contraseña falla
                 $error = "Contraseña incorrecta.";
             }
         } else {
-            $_SESSION['intentos_login']++; // Incrementar intentos fallidos
+            $_SESSION['intentos_login']++; // Incrementar intentos fallidos si el usuario no está en la base de datos registrado
             $error = "Usuario no encontrado.";
         }
 
@@ -69,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Cerrar conexión si se alcanzan los 3 intentos fallidos
     if ($_SESSION['intentos_login'] >= 3) {
-        $conn = null; // Cerrar conexión
+        $conn = null;
         $error = "Has fallado el inicio de sesión 3 veces. Conexión cerrada.";
     }
 }
@@ -83,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Web Pedidos</title>
 </head>
 
 <body>
