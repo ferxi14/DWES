@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_SESSION['intentos_login'] == 3) {
         session_destroy();
         $conn = null;
-        $error = "Has fallado el inicio de sesión 3 veces. Conexión cerrada.";
+        $error = "Has fallado el inicio de sesión 3 veces, conexión cerrada";
     }
 }
 
