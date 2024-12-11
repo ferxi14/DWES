@@ -62,11 +62,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "Error al consultar en la base de datos" . $e->getMessage();
     }
 
-    // Cerrar conexión si se alcanzan los 3 intentos fallidos
+    // Si se alcanzan los tres fallos se cierra la conexion
     if ($_SESSION['intentos_login'] == 3) {
         session_destroy();
         $conn = null;
-        $error = "Has fallado el inicio de sesión 3 veces, conexión cerrada";
+        $error = "Has fallado el inicio de sesión 3 veces, conexion cerrada";
     }
 }
 
