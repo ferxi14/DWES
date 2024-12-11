@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 $host = "localhost";
 $username = "root";
@@ -40,6 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Verificar contraseña
             if (password_verify($password, $hashedPassword)) {
+                // Se inicia la sesión
+                session_start();
+
                 // Restablecer intentos fallidos
                 $_SESSION['intentos_login'] = 0;
 
@@ -47,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['customerNumber'] = $user['customerNumber'];
 
                 // Redirigir al menú principal
-                //header("Location: pe_inicio.php");
+                header("Location: pe_inicio.php");
                 exit();
             } else {
                 $_SESSION['intentos_login']++; // Incrementar intentos fallidos si la verificación de la contraseña falla
@@ -64,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Si se alcanzan los tres fallos se cierra la conexion
     if ($_SESSION['intentos_login'] == 3) {
-        session_destroy();
         $conn = null;
         $error = "Has fallado el inicio de sesión 3 veces, conexion cerrada";
     }
