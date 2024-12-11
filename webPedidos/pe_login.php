@@ -12,9 +12,11 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Inicializa contador de intentos fallidos en sesión
-if (!isset($_SESSION['intentos_login'])) {
-    $_SESSION['intentos_login'] = 0;
+// Inicializa el contador de intentos fallidos con cookies
+if (isset($_COOKIE['intentos_login'])) {
+    $intentosLogin = (int)$_COOKIE['intentos_login'];
+} else {
+    $intentosLogin = 0;
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -22,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     var_dump($customerNumber, $password);
-    
 
     try {
         // Consulta para obtener los datos del cliente
@@ -39,38 +40,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Verificar contraseña
             if (password_verify($password, $hashedPassword)) {
-                // Se inicia la sesión
+                // Inicia la sesión y restablece intentos fallidos
                 session_start();
 
-                // Restablecer intentos fallidos
-                $_SESSION['intentos_login'] = 0;
-
-                // Guardar datos en la sesión
                 $_SESSION['customerNumber'] = $user['customerNumber'];
 
-                // Redirigir al menú principal
+                setcookie('intentos_login', 0, time() - 3600); // Borra la cookie
+                $intentosLogin = 0; // Actualiza el contador en el código
                 header("Location: pe_inicio.php");
                 exit();
             } else {
-                $_SESSION['intentos_login']++; // Incrementar intentos fallidos si la verificación de la contraseña falla
-                $error = "Fallo al iniciar sesión, contraseña incorrecta";
+                // Contraseña incorrecta, incrementar intentos fallidos
+                $intentosLogin++;
+                $error = "Fallo al iniciar sesión";
             }
         } else {
-            $_SESSION['intentos_login']++; // Incrementar intentos fallidos si el usuario no está en la base de datos registrado
-            $error = "Fallo al iniciar sesión, usuario no encontrado.";
+            // Usuario no encontrado, incrementar intentos fallidos
+            $intentosLogin++;
+            $error = "Fallo al iniciar sesión";
         }
-        var_dump($_SESSION['intentos_login']);
+
+        // Actualiza la cookie con los nuevos intentos
+        setcookie('intentos_login', $intentosLogin, time() + 3600);
+        var_dump($intentosLogin);
+
     } catch (PDOException $e) {
-        $error = "Error al consultar en la base de datos" . $e->getMessage();
+        $error = "Error al consultar en la base de datos: " . $e->getMessage();
     }
 
-    // Si se alcanzan los tres fallos se cierra la conexion
-    if ($_SESSION['intentos_login'] == 3) {
+    // Bloquea al usuario si supera los 3 intentos
+    if ($intentosLogin >= 3) {
         $conn = null;
-        $error = "Has fallado el inicio de sesión 3 veces, conexion cerrada";
+        $error = "Has fallado el inicio de sesión 3 veces, se ha cerrado la conexión";
     }
 }
-
 
 ?>
 
