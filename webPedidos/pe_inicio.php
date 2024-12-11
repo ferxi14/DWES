@@ -1,5 +1,11 @@
 <?php
-
+if ($_SERVER ["REQUEST_METHOD"] == "POST") {
+    if (isset($_SESSION)) {
+        session_destroy();
+        header("Location: pe_login.php");
+    }
+    
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -11,6 +17,9 @@
 <body>
     <div>
         <h1>Bienvenido</h1>
+        <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+            <button type="submit">Cerrar sesión</button>
+        </form>
     </div>
 </body>
 </html>
