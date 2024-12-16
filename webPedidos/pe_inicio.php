@@ -22,6 +22,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
             <button type="submit">Cerrar sesión</button>
         </form>
+
+        <nav>
+            <a href="pe_altaped.php">Realizar Pedido</a>
+            <a href="pe_consped.php">Consultar Pedidos</a>
+            <a href="pe_consprodstock.php">Consultar stock disponible</a>
+        </nav>
     </div>
 </body>
 
