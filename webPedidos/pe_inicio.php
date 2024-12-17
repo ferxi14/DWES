@@ -2,7 +2,7 @@
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     session_unset();
     session_destroy();
-    setcookie(session_name(), '', time() - 3600);
+    setcookie(session_name(), '', time() - 3600, "/");
     header("Location: pe_login.php");
     exit();
 }

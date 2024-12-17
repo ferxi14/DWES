@@ -21,7 +21,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!preg_match('/^[A-Z]{2}[0-9]{5}$/', $checkNumber)) {
         $error = "El número de pago debe tener el formato AA99999.";
     } else {
-    
+        $orderDate = date('Y-m-d');
+        $requiredDate = $orderDate; // Fecha de solicitud igual a la fecha del sistema
+        $shippedDate = null;
+
+        // Registro del pedido en la base de datos
+        $stmt = $conn->prepare(
+            "INSERT INTO orders (customerNumber, orderDate, requiredDate, shippedDate, status) 
+            VALUES (:customerNumber, :orderDate, :requiredDate, :shippedDate, 'In Process')"
+        );
+        $stmt->execute([
+            ':customerNumber' => $customerNumber,
+            ':orderDate' => $orderDate,
+            ':requiredDate' => $requiredDate,
+            ':shippedDate' => $shippedDate
+        ]);
     }
 }
 ?>
