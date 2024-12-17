@@ -13,8 +13,8 @@ try {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $customerNumber = $_POST['customerNumber']; // ID del cliente
-    $itemsSeleccionados = $_POST['items'];           // Artículos seleccionados
-    $numPago = $_POST['checkNumber'];       // Número de pago
+    $itemsSeleccionados = $_POST['items'];      // Artículos seleccionados
+    $numPago = $_POST['checkNumber'];           // Número de pago
     $precioTotal = 0;                           // Total del pedido
 
     // Validación del número del pago
