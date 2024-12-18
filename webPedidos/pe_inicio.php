@@ -24,9 +24,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
         <nav>
-            <a href="pe_altaped.php">Realizar Pedido</a>
-            <a href="pe_consped.php">Consultar Pedidos</a>
+            <a href="pe_altaped.php">Realizar pedido</a>
+            <br>
+            <a href="pe_consped.php">Consultar pedidos</a>
+            <br>
             <a href="pe_consprodstock.php">Consultar stock disponible</a>
+            <br>
+            <a href="pe_constock.php">Consultar stock total de una determinada linea de productos</a>
+            <br>
+            <a href="pe_topprod.php">Consultar unidades vendidas</a>
+            <br>
+            <a href="pe_conspago.php">Consultar pagos</a>
         </nav>
     </div>
 </body>
