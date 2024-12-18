@@ -1,16 +1,7 @@
 <?php
 
-$host = "localhost";
-$username = "root";
-$password = "rootroot";
-$dbname = "pedidos";
-
-try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
-}
+require_once 'pe_db.php';
+$conn = conexionDB();
 
 // Inicializa el contador de intentos fallidos con cookies
 if (isset($_COOKIE['intentos_login'])) {
