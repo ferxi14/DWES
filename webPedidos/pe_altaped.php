@@ -36,6 +36,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ':requiredDate' => $requiredDate,
             ':shippedDate' => $shippedDate
         ]);
+
+        // Integración con Redsys
+        $orderId = $conn->lastInsertId();
+        $precioTotal = 100;
+        $merchantCode = 'YOUR_MERCHANT_CODE';
+        $terminal = '1';
+        $currency = '978';
+        $transactionType = '0';
+        $urlMerchant = 'http://yourdomain.com/pe_respuesta.php';
+        $urlOk = 'http://yourdomain.com/pe_exito.php';
+        $urlKo = 'http://yourdomain.com/pe_error.php';
+
+        // Generar firma
+        $key = 'YOUR_SECRET_KEY';
+        $signature = hash('sha256', $orderId . $merchantCode . $terminal . $precioTotal . $currency . $transactionType . $urlMerchant . $key);
+
+        // Redirigir a la pasarela de pago
+        echo "<form id='redsysForm' action='https://sis.redsys.es/sis/realizarPago' method='POST'>
+                <input type='hidden' name='Ds_Merchant_Amount' value='$precioTotal'>
+                <input type='hidden' name='Ds_Merchant_Order' value='$orderId'>
+                <input type='hidden' name='Ds_Merchant_MerchantCode' value='$merchantCode'>
+                <input type='hidden' name='Ds_Merchant_Currency' value='$currency'>
+                <input type='hidden' name='Ds_Merchant_TransactionType' value='$transactionType'>
+                <input type='hidden' name='Ds_Merchant_Terminal' value='$terminal'>
+                <input type='hidden' name='Ds_Merchant_MerchantURL' value='$urlMerchant'>
+                <input type='hidden' name='Ds_Merchant_UrlOK' value='$urlOk'>
+                <input type='hidden' name='Ds_Merchant_UrlKO' value='$urlKo'>
+                <input type='hidden' name='Ds_Merchant_Signature' value='$signature'>
+              </form>
+              <script>document.getElementById('redsysForm').submit();</script>";
+        exit();
     }
 }
 ?>
