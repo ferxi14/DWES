@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fechadesde'], $_POST['
 					<div>
 						<input type="submit" value="Consultar" name="Consultar" class="btn btn-warning disabled">
 
-						<input type="submit" value="Volver" name="Volver" class="btn btn-warning disabled" onclick="window.location.href='movwelcome.php'">
+						<input type="button" value="Volver" name="Volver" class="btn btn-warning disabled" onclick="window.location.href='movwelcome.php'">
 
 					</div>
 				</form>
