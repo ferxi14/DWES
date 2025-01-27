@@ -9,35 +9,65 @@ require_once '../db/movconfig.php';
 
 $user = $_SESSION['usuario'];
 try {
-    $conn = conexionDB();
+	$conn = conexionDB();
 
-    $vehiculosDisponibles = [];
-    $sql = "SELECT matricula, marca, modelo FROM rvehiculos WHERE disponible = 'S'";
-    $stmt = $conn->query($sql);
+	$vehiculosDisponibles = [];
+	$sql = "SELECT matricula, marca, modelo FROM rvehiculos WHERE disponible = 'S'";
+	$stmt = $conn->query($sql);
 
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $vehiculosDisponibles[] = $row;
-    }
+	while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		$vehiculosDisponibles[] = $row;
+	}
 
-    if (!isset($_SESSION['cesta'])) {
-        $_SESSION['cesta'] = [];
-    }
+	if (!isset($_SESSION['cesta'])) {
+		$_SESSION['cesta'] = [];
+	}
 
-    if (isset($_POST['agregar'])) {
-        if (count($_SESSION['cesta']) < 3) {
-            $vehiculoSeleccionado = $_POST['vehiculos'];
-            $_SESSION['cesta'][] = $vehiculoSeleccionado;
-        } else {
-            echo "No puedes agregar más de 3 vehículos.";
-        }
-    }
+	if (isset($_POST['agregar'])) {
+		$vehiculoSeleccionado = $_POST['vehiculos'];
+		if (count($_SESSION['cesta']) < 3) {
+			if (!in_array($vehiculoSeleccionado, $_SESSION['cesta'])) {
+				$_SESSION['cesta'][] = $vehiculoSeleccionado;
+			} else {
+				echo "El vehículo ya está en la cesta.";
+			}
+		} else {
+			echo "No puedes agregar más de 3 vehículos.";
+		}
+	}
 
-    if (isset($_POST['vaciar'])) {
-        $_SESSION['cesta'] = [];
-    }
+	if (isset($_POST['vaciar'])) {
+		$_SESSION['cesta'] = [];
+	}
 
+	if (isset($_POST['alquilar'])) {
+		$idcliente = $user['idcliente'];
+		$fecha_alquiler = date('Y-m-d H:i:s');
+		$fecha_devolucion = null;
+		$preciototal = null;
+
+		$insert = "INSERT INTO ralquileres (idcliente, matricula, fecha_alquiler, fecha_devolucion, preciototal) VALUES (:idcliente, :matricula, :fecha_alquiler, :fecha_devolucion, :preciototal)";
+		$stmt = $conn->prepare($insert);
+
+		foreach ($_SESSION['cesta'] as $matricula) {
+			$stmt->execute([
+				':idcliente' => $idcliente,
+				':matricula' => $matricula,
+				':fecha_alquiler' => $fecha_alquiler,
+				':fecha_devolucion' => $fecha_devolucion,
+				':preciototal' => $preciototal
+			]);
+
+			$sqlUpdate = "UPDATE rvehiculos SET disponible = 'N' WHERE matricula = :matricula";
+			$stmtUpdate = $conn->prepare($sqlUpdate);
+			$stmtUpdate->execute([':matricula' => $matricula]);
+		}
+
+		$_SESSION['cesta'] = [];
+		echo "Alquiler realizado con éxito.";
+	}
 } catch (PDOException $e) {
-    die("ERROR: No se pudo conectar a la base de datos. " . $e->getMessage());
+	die("ERROR: No se pudo conectar a la base de datos. " . $e->getMessage());
 }
 ?>
 <html>
